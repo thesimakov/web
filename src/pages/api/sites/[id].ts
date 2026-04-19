@@ -1,14 +1,13 @@
-import { Prisma } from "@prisma/client";
-import { NextResponse } from "next/server";
+import type { APIRoute } from "astro";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { safeParseCodegenPayload } from "@/ai/validation/codegen-output.zod";
 import { safeParseSiteSchema } from "@/ai/validation/site-schema.zod";
+import { jsonResponse } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 import { isCodegenSitePayload } from "@/lib/site-output";
 import { saveSiteGenerationResult } from "@/lib/site-versioning";
-
-export const runtime = "nodejs";
 
 const patchBodySchema = z.object({
   userId: z.string().min(1),
@@ -16,11 +15,11 @@ const patchBodySchema = z.object({
   schema: z.unknown(),
 });
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } },
-) {
-  const { id } = params;
+export const GET: APIRoute = async ({ params }) => {
+  const id = params.id;
+  if (!id) {
+    return jsonResponse({ error: "Некорректный id" }, { status: 400 });
+  }
   const site = await prisma.site.findUnique({
     where: { id },
     include: {
@@ -29,10 +28,10 @@ export async function GET(
   });
 
   if (!site) {
-    return NextResponse.json({ error: "Сайт не найден" }, { status: 404 });
+    return jsonResponse({ error: "Сайт не найден" }, { status: 404 });
   }
 
-  return NextResponse.json({
+  return jsonResponse({
     id: site.id,
     userId: site.userId,
     prompt: site.prompt,
@@ -41,20 +40,19 @@ export async function GET(
     publishedUrl: site.publishedUrl,
     versionCount: site._count.versions,
   });
-}
+};
 
-/**
- * Ручное сохранение схемы: обновляет сайт и добавляет новую версию (проверка userId).
- */
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export const PATCH: APIRoute = async ({ request, params }) => {
+  const id = params.id;
+  if (!id) {
+    return jsonResponse({ error: "Некорректный id" }, { status: 400 });
+  }
+
   let json: unknown;
   try {
-    json = await req.json();
+    json = await request.json();
   } catch {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Некорректное тело запроса (ожидается JSON)" },
       { status: 400 },
     );
@@ -62,7 +60,7 @@ export async function PATCH(
 
   const parsed = patchBodySchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Некорректные поля", issues: parsed.error.flatten() },
       { status: 400 },
     );
@@ -70,11 +68,11 @@ export async function PATCH(
 
   const { userId, prompt, schema } = parsed.data;
   const site = await prisma.site.findFirst({
-    where: { id: params.id, userId },
+    where: { id, userId },
   });
 
   if (!site) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Сайт не найден или нет доступа" },
       { status: 403 },
     );
@@ -87,7 +85,7 @@ export async function PATCH(
       files: schema.files,
     });
     if (!codegenValid.success) {
-      return NextResponse.json(
+      return jsonResponse(
         {
           error: "Codegen-пейлоад не прошёл проверку",
           issues: codegenValid.error.flatten(),
@@ -104,7 +102,7 @@ export async function PATCH(
   } else {
     const valid = safeParseSiteSchema(schema);
     if (!valid.success) {
-      return NextResponse.json(
+      return jsonResponse(
         {
           error: "Схема не прошла проверку",
           issues: valid.error.flatten(),
@@ -126,7 +124,7 @@ export async function PATCH(
     });
   } catch (e) {
     if (e instanceof Error && e.name === "SiteAccessError") {
-      return NextResponse.json(
+      return jsonResponse(
         { error: "Сайт не найден или нет доступа" },
         { status: 403 },
       );
@@ -139,10 +137,10 @@ export async function PATCH(
     include: { _count: { select: { versions: true } } },
   });
 
-  return NextResponse.json({
+  return jsonResponse({
     id: updated!.id,
     prompt: updated!.prompt,
     schema: updated!.schemaJson,
     versionCount: updated!._count.versions,
   });
-}
+};

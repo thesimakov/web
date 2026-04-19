@@ -1,24 +1,25 @@
-import { NextResponse } from "next/server";
+import type { APIRoute } from "astro";
 
 import { getDemoUserId } from "@/lib/env.server";
+import { jsonResponse } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs";
-
 /** Список версий схемы сайта (метаданные; полная схема — GET …/versions/[version]). */
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
-  const { searchParams } = new URL(req.url);
+export const GET: APIRoute = async ({ request, params }) => {
+  const id = params.id;
+  if (!id) {
+    return jsonResponse({ error: "Некорректный id" }, { status: 400 });
+  }
+
+  const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId") ?? getDemoUserId();
 
   const site = await prisma.site.findFirst({
-    where: { id: params.id, userId },
+    where: { id, userId },
   });
 
   if (!site) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Сайт не найден или нет доступа" },
       { status: 404 },
     );
@@ -35,9 +36,9 @@ export async function GET(
     },
   });
 
-  return NextResponse.json({
+  return jsonResponse({
     siteId: site.id,
     userId: site.userId,
     versions,
   });
-}
+};

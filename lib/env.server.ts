@@ -48,7 +48,7 @@ const serverEnvSchema = z.object({
   /** Gemini: flash быстрый; Pro — качество. Имя модели из документации Google. */
   GOOGLE_MODEL: z.string().default("gemini-2.0-flash"),
 
-  /** Демо-пользователь без auth: список сайтов и save в /api/generate. Дублируй в NEXT_PUBLIC_DEMO_USER_ID для клиента. */
+  /** Демо-пользователь без auth: список сайтов и save в /api/generate. Дублируй в PUBLIC_DEMO_USER_ID для клиента (Astro). */
   DEMO_USER_ID: z.string().default("local-demo"),
 
   /** Секрет для HMAC подписи webhook оплаты (сырое тело запроса). */

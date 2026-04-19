@@ -1,9 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-
 import { EditorSiteMeta } from "@/components/editor/editor-site-meta";
 import { buttonVariants } from "@/components/ui/button";
 import { CLIENT_DEMO_USER_ID } from "@/lib/demo-user-public";
@@ -54,16 +51,17 @@ export function GenerationEditor({
   initialSiteId?: string;
   initialOutputMode?: "schema" | "codegen";
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const replaceEditorUrl = useCallback(
     (opts: { site?: string | null; mode: "schema" | "codegen" }) => {
+      if (typeof window === "undefined") {
+        return;
+      }
       const site = opts.site ?? undefined;
       const q = buildEditorSearch({ site: site ?? undefined, mode: opts.mode });
-      router.replace(`${pathname}?${q}`, { scroll: false });
+      const pathname = window.location.pathname;
+      window.history.replaceState(null, "", `${pathname}?${q}`);
     },
-    [router, pathname],
+    [],
   );
   const [prompt, setPrompt] = useState(
     "Лендинг для AI-маркетинга для стартапов, тон современный, акцент на лид-форму",
@@ -294,7 +292,7 @@ export function GenerationEditor({
             <code className="text-zinc-400">{CLIENT_DEMO_USER_ID}</code>
           </p>
         </div>
-        <Link
+        <a
           href="/dashboard"
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
@@ -302,7 +300,7 @@ export function GenerationEditor({
           )}
         >
           Мои сайты
-        </Link>
+        </a>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-4 ring-1 ring-white/5 sm:p-6">

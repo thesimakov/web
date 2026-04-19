@@ -1,6 +1,3 @@
-import Link from "next/link";
-import Image from "next/image";
-
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -13,53 +10,53 @@ export function SiteHeader({ className }: { className?: string }) {
       )}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
-        <Link
+        <a
           href="/"
           className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-white"
         >
-          <Image
+          <img
             src="/lemnity.svg"
             alt="Lemnity"
             width={112}
             height={24}
-            priority
             className="h-6 w-auto"
+            fetchPriority="high"
           />
-        </Link>
+        </a>
         <nav className="hidden items-center gap-1 text-sm text-zinc-400 md:flex">
-          <Link
+          <a
             href="/#templates"
             className="rounded-lg px-3 py-2 transition hover:bg-white/[0.06] hover:text-white"
           >
             Шаблоны
-          </Link>
-          <Link
+          </a>
+          <a
             href="/#features"
             className="rounded-lg px-3 py-2 transition hover:bg-white/[0.06] hover:text-white"
           >
             Возможности
-          </Link>
-          <Link
+          </a>
+          <a
             href="/editor"
             className="rounded-lg px-3 py-2 transition hover:bg-white/[0.06] hover:text-white"
           >
             Редактор
-          </Link>
-          <Link
+          </a>
+          <a
             href="/dashboard"
             className="rounded-lg px-3 py-2 transition hover:bg-white/[0.06] hover:text-white"
           >
             Мои сайты
-          </Link>
-          <Link
+          </a>
+          <a
             href="/#preview"
             className="rounded-lg px-3 py-2 transition hover:bg-white/[0.06] hover:text-white"
           >
             Пример
-          </Link>
+          </a>
         </nav>
         <div className="flex items-center gap-2">
-          <Link
+          <a
             href="/dashboard"
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
@@ -67,8 +64,8 @@ export function SiteHeader({ className }: { className?: string }) {
             )}
           >
             Войти
-          </Link>
-          <Link
+          </a>
+          <a
             href="/editor"
             className={cn(
               buttonVariants({ size: "sm" }),
@@ -76,7 +73,7 @@ export function SiteHeader({ className }: { className?: string }) {
             )}
           >
             Начать
-          </Link>
+          </a>
         </div>
       </div>
     </header>

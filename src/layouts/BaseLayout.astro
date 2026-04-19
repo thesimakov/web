@@ -1,0 +1,40 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Lemnity — промпт, сборка, публикация",
+  description = "Создавайте страницы из промпта: схема, codegen и превью в одном редакторе — без сырого HTML из модели.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru" class="dark font-sans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/lemnity.svg" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&subset=latin,cyrillic&display=swap"
+      rel="stylesheet"
+    />
+    <style is:global>
+      :root {
+        --font-sans:
+          "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji";
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <slot />
+  </body>
+</html>

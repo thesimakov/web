@@ -1,20 +1,18 @@
-import { Prisma } from "@prisma/client";
-import { NextResponse } from "next/server";
+import type { APIRoute } from "astro";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
+import { runCodegenPipeline } from "@/ai/pipeline/run-codegen-pipeline";
+import { runGenerationPipeline } from "@/ai/pipeline/run-generation-pipeline";
+import { jsonResponse } from "@/lib/http";
+import { runWithBillingPlan } from "@/lib/billing/planAsyncContext";
+import { prisma } from "@/lib/prisma";
+import { saveSiteGenerationResult } from "@/lib/site-versioning";
 import {
   planForLlmRouting,
   resolveBillingGate,
-} from "@/app/api/generate/billing-gate";
-import { runWithBillingPlan } from "@/lib/billing/planAsyncContext";
-import { runCodegenPipeline } from "@/ai/pipeline/run-codegen-pipeline";
-import { runGenerationPipeline } from "@/ai/pipeline/run-generation-pipeline";
-import { prisma } from "@/lib/prisma";
-import { saveSiteGenerationResult } from "@/lib/site-versioning";
+} from "@/server/billing-gate";
 import { deductTokensForGeneration } from "@/services/billing/tokenLedger";
-
-export const runtime = "nodejs";
-export const maxDuration = 120;
 
 async function persistGenerationSave(params: {
   userId: string;
@@ -90,12 +88,12 @@ const bodySchema = z.object({
   siteId: z.string().min(1).optional(),
 });
 
-export async function POST(req: Request) {
+export const POST: APIRoute = async ({ request }) => {
   let json: unknown;
   try {
-    json = await req.json();
+    json = await request.json();
   } catch {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Некорректное тело запроса (ожидается JSON)" },
       { status: 400 },
     );
@@ -103,7 +101,7 @@ export async function POST(req: Request) {
 
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Некорректные поля запроса", issues: parsed.error.flatten() },
       { status: 400 },
     );
@@ -119,7 +117,7 @@ export async function POST(req: Request) {
   } = parsed.data;
 
   if (save && !userId) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "При save: true нужно передать userId" },
       { status: 400 },
     );
@@ -291,7 +289,7 @@ export async function POST(req: Request) {
             existingSiteId,
           });
           if ("forbidden" in pr) {
-            return NextResponse.json(
+            return jsonResponse(
               { error: "Сайт не найден или нет доступа" },
               { status: 403 },
             );
@@ -311,7 +309,7 @@ export async function POST(req: Request) {
           await deductTokensForGeneration({ userId, mode: outputMode });
         }
 
-        return NextResponse.json({
+        return jsonResponse({
           mode: "codegen",
           codegen: result.codegen,
           siteId,
@@ -330,7 +328,7 @@ export async function POST(req: Request) {
           existingSiteId,
         });
         if ("forbidden" in pr) {
-          return NextResponse.json(
+          return jsonResponse(
             { error: "Сайт не найден или нет доступа" },
             { status: 403 },
           );
@@ -350,7 +348,7 @@ export async function POST(req: Request) {
         await deductTokensForGeneration({ userId, mode: outputMode });
       }
 
-      return NextResponse.json({
+      return jsonResponse({
         mode: "schema",
         schema: result.schema,
         siteId,
@@ -358,7 +356,7 @@ export async function POST(req: Request) {
       });
     });
   } catch (e) {
-    return NextResponse.json(
+    return jsonResponse(
       {
         error:
           e instanceof Error ? e.message : "Ошибка генерации",
@@ -366,4 +364,4 @@ export async function POST(req: Request) {
       { status: 500 },
     );
   }
-}
+};

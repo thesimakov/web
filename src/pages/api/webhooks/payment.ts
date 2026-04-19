@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import type { APIRoute } from "astro";
 
 import { getServerEnv } from "@/lib/env.server";
+import { jsonResponse } from "@/lib/http";
 import {
   isSuccessfulPaymentStatus,
   getPlanFromPayment,
@@ -12,8 +13,6 @@ import {
   verifyCloudPaymentsContentHmac,
 } from "@/services/billing/cloudpayments";
 import { creditTokensAfterPayment } from "@/services/billing/tokenCreditService";
-
-export const runtime = "nodejs";
 
 /**
  * Webhook оплаты.
@@ -27,13 +26,13 @@ export const runtime = "nodejs";
  *
  * **Универсальный формат** (HMAC hex): заголовок `X-Signature: sha256=<hex>`, секрет `PAYMENT_WEBHOOK_SECRET`.
  */
-export async function POST(req: Request) {
-  const rawBody = await req.text();
+export const POST: APIRoute = async ({ request }) => {
+  const rawBody = await request.text();
   const env = getServerEnv();
 
   const contentHmac =
-    req.headers.get("content-hmac") ??
-    req.headers.get("Content-HMAC");
+    request.headers.get("content-hmac") ??
+    request.headers.get("Content-HMAC");
 
   const cpSecret = env.CLOUDPAYMENTS_API_SECRET?.trim();
 
@@ -49,15 +48,15 @@ export async function POST(req: Request) {
     provider = "cloudpayments";
   } else {
     const sig =
-      req.headers.get("x-signature") ??
-      req.headers.get("x-webhook-signature") ??
-      req.headers.get("x-openrouter-signature");
+      request.headers.get("x-signature") ??
+      request.headers.get("x-webhook-signature") ??
+      request.headers.get("x-openrouter-signature");
     signatureOk = verifyPaymentSignature(rawBody, sig);
     provider = "generic";
   }
 
   if (!signatureOk) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Invalid signature", code: 13 },
       { status: 401 },
     );
@@ -67,12 +66,12 @@ export async function POST(req: Request) {
   try {
     json = parseCloudPaymentsBody(rawBody);
   } catch {
-    return NextResponse.json({ error: "Invalid body", code: 13 }, { status: 400 });
+    return jsonResponse({ error: "Invalid body", code: 13 }, { status: 400 });
   }
 
   const parsed = getPlanFromPayment(json);
   if (!parsed.userId || !parsed.externalPaymentId) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: "Missing AccountId / user_id or TransactionId / id", code: 12 },
       { status: 400 },
     );
@@ -81,12 +80,12 @@ export async function POST(req: Request) {
   if (!isSuccessfulPaymentStatus(parsed.paymentStatus, provider)) {
     const body = { ok: true, ignored: true, reason: "not success" };
     return provider === "cloudpayments"
-      ? NextResponse.json({ code: 0, ...body })
-      : NextResponse.json(body);
+      ? jsonResponse({ code: 0, ...body })
+      : jsonResponse(body);
   }
 
   if (!parsed.planId?.trim()) {
-    return NextResponse.json(
+    return jsonResponse(
       {
         error:
           "Укажите план: JsonData {\"plan\":\"PRO\"} или InvoiceId plan_PRO",
@@ -98,7 +97,7 @@ export async function POST(req: Request) {
 
   const planType = resolvePlanTypeFromExternal(parsed.planId);
   if (!planType) {
-    return NextResponse.json({ error: "Unknown plan", code: 12 }, { status: 400 });
+    return jsonResponse({ error: "Unknown plan", code: 12 }, { status: 400 });
   }
 
   const result = await creditTokensAfterPayment({
@@ -115,7 +114,7 @@ export async function POST(req: Request) {
   });
 
   if (!result.ok) {
-    return NextResponse.json(
+    return jsonResponse(
       { error: result.error, code: 13 },
       { status: 500 },
     );
@@ -129,10 +128,10 @@ export async function POST(req: Request) {
   };
 
   return provider === "cloudpayments"
-    ? NextResponse.json(payload)
-    : NextResponse.json({
+    ? jsonResponse(payload)
+    : jsonResponse({
         ok: payload.ok,
         tokensAdded: payload.tokensAdded,
         duplicate: payload.duplicate,
       });
-}
+};

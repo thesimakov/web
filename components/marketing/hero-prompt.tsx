@@ -8,8 +8,6 @@ import {
   LayoutTemplate,
   Sparkles,
 } from "lucide-react";
-import Link from "next/link";
-
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -93,7 +91,7 @@ export function HeroPrompt() {
               <span className="text-xs text-zinc-500">
                 Генерация через <code className="text-zinc-400">/api/generate</code>
               </span>
-              <Link
+              <a
                 href="/editor"
                 className={cn(
                   buttonVariants({ size: "sm" }),
@@ -101,7 +99,7 @@ export function HeroPrompt() {
                 )}
               >
                 Сгенерировать
-              </Link>
+              </a>
             </div>
           </div>
         </motion.div>
@@ -118,22 +116,22 @@ export function HeroPrompt() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             {templates.map(({ label, icon: Icon }) => (
-              <Link
+              <a
                 key={label}
                 href="/editor"
                 className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-zinc-300 transition hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white sm:text-sm"
               >
                 <Icon className="h-3.5 w-3.5 text-zinc-500" aria-hidden />
                 {label}
-              </Link>
+              </a>
             ))}
-            <Link
+            <a
               href="/#preview"
               className="inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-xs font-medium text-zinc-500 transition hover:text-zinc-300 sm:text-sm"
             >
               Смотреть пример
               <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-            </Link>
+            </a>
           </div>
         </motion.div>
 

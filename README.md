@@ -1,30 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This project is built with [Astro](https://astro.build), [React](https://react.dev) (острова для интерактива) и [Tailwind CSS](https://tailwindcss.com).
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies and run the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:4321](http://localhost:4321) in the browser (порт Astro по умолчанию).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load fonts.
+- `npm run dev` — режим разработки
+- `npm run build` — production-сборка
+- `npm run start` — запуск собранного Node-сервера (`output: "server"`, адаптер `@astrojs/node`)
+- `npm run preview` — превью после `build`
+- `npm run lint` — `astro check`
 
-## Learn More
+## Env
 
-To learn more about Next.js, take a look at the following resources:
+Для демо-пользователя на клиенте задайте `PUBLIC_DEMO_USER_ID` (должен совпадать с `DEMO_USER_ID` на сервере).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-See the [deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for how to ship your app.
+См. также комментарии в `lib/env.server.ts` и Prisma/БД.

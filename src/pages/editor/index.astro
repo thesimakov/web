@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { GenerationEditor } from "@/components/editor/generation-editor";
+import { SiteHeader } from "@/components/marketing/site-header";
+
+const site = Astro.url.searchParams.get("site") ?? undefined;
+const modeRaw = Astro.url.searchParams.get("mode");
+const initialOutputMode =
+  modeRaw === "schema" || modeRaw === "codegen" ? modeRaw : undefined;
+---
+
+<BaseLayout title="Редактор — Lemnity">
+  <SiteHeader />
+  <GenerationEditor
+    client:load
+    initialSiteId={site}
+    initialOutputMode={initialOutputMode}
+  />
+</BaseLayout>

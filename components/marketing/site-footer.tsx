@@ -1,6 +1,3 @@
-import Link from "next/link";
-import Image from "next/image";
-
 const product = [
   { href: "/#features", label: "Возможности" },
   { href: "/#preview", label: "Пример страницы" },
@@ -21,7 +18,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 sm:px-6">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2">
-            <Image
+            <img
               src="/lemnity.svg"
               alt="Lemnity"
               width={120}
@@ -41,9 +38,9 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm text-zinc-400">
             {product.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="transition hover:text-white">
+                <a href={item.href} className="transition hover:text-white">
                   {item.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -55,9 +52,9 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm text-zinc-400">
             {company.map((item) => (
               <li key={item.label}>
-                <Link href={item.href} className="transition hover:text-white">
+                <a href={item.href} className="transition hover:text-white">
                   {item.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -69,15 +66,9 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm text-zinc-400">
             {resources.map((item) => (
               <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="transition hover:text-white"
-                  {...("external" in item && item.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                >
+                <a href={item.href} className="transition hover:text-white">
                   {item.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

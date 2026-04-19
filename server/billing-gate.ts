@@ -1,7 +1,7 @@
 import type { PlanType } from "@prisma/client";
-import { NextResponse } from "next/server";
 
 import { ensureBillingUser } from "@/lib/billing/ensure-user";
+import { jsonResponse } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 import { canUseCodegenMode } from "@/services/billing/entitlements";
 import { assertEnoughTokens } from "@/services/billing/tokenLedger";
@@ -14,7 +14,7 @@ export type BillingGateResult =
 export async function resolveBillingGate(
   userId: string | undefined,
   outputMode: "schema" | "codegen",
-): Promise<{ error: NextResponse } | BillingGateResult> {
+): Promise<{ error: Response } | BillingGateResult> {
   if (!userId) {
     return { anonymousFullAccess: true };
   }
@@ -29,7 +29,7 @@ export async function resolveBillingGate(
 
   if (outputMode === "codegen" && !canUseCodegenMode(planType)) {
     return {
-      error: NextResponse.json(
+      error: jsonResponse(
         {
           error: "Режим codegen доступен с плана PRO и выше",
           code: "PLAN_FORBIDDEN",
@@ -43,7 +43,7 @@ export async function resolveBillingGate(
   const check = await assertEnoughTokens(userId, charge);
   if (!check.ok) {
     return {
-      error: NextResponse.json(
+      error: jsonResponse(
         {
           error: "Недостаточно токенов",
           required: charge,
