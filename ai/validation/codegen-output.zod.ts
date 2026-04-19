@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Один файл в выдаче codegen (пути как в v0: /components/X.tsx). */
+/** Один файл в выдаче codegen (пути вида /components/X.tsx). */
 export const codegenFileSchema = z.object({
   path: z
     .string()

@@ -68,16 +68,8 @@ export function HeroPrompt() {
           transition={{ duration: 0.5, delay: 0.08 }}
           className="mx-auto mt-5 max-w-xl text-pretty text-base leading-relaxed text-zinc-400 sm:text-lg"
         >
-          Промпт, сборка и превью — как у{" "}
-          <a
-            href="https://v0.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-zinc-200 underline decoration-white/20 underline-offset-4 transition hover:decoration-white/40"
-          >
-            v0
-          </a>
-          : структура и тексты приходят из данных, вы контролируете схему и режим вывода.
+          Промпт, сборка и превью: структура и тексты приходят из данных, вы контролируете
+          схему и режим вывода.
         </motion.p>
 
         <motion.div

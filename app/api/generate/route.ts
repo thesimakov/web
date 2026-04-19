@@ -81,7 +81,7 @@ function recordGenerationUsage(params: {
 
 const bodySchema = z.object({
   prompt: z.string().min(1).max(12_000),
-  /** schema — JSON-схема + рендер; codegen — файлы TSX (v0-style). */
+  /** schema — JSON-схема + рендер; codegen — несколько файлов TSX. */
   mode: z.enum(["schema", "codegen"]).optional().default("schema"),
   stream: z.boolean().optional(),
   userId: z.string().min(1).optional(),

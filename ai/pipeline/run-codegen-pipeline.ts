@@ -11,7 +11,7 @@ export type CodegenProgress = {
 };
 
 /**
- * Генерация набора файлов (режим v0-like). Выход только после Zod или fallback.
+ * Генерация набора файлов (режим codegen). Выход только после Zod или fallback.
  */
 export async function runCodegenPipeline(
   userPrompt: string,

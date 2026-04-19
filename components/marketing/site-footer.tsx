@@ -13,10 +13,7 @@ const company = [
   { href: "#", label: "Конфиденциальность — скоро" },
 ];
 
-const resources = [
-  { href: "/#faq", label: "FAQ" },
-  { href: "https://v0.app", label: "Вдохновение: v0", external: true },
-];
+const resources = [{ href: "/#faq", label: "FAQ" }];
 
 export function SiteFooter() {
   return (

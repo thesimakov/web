@@ -24,16 +24,7 @@ export default function Home() {
               Страница целиком из схемы
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-zinc-400 sm:text-base">
-              Тот же принцип, что и у{" "}
-              <a
-                href="https://v0.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-200 underline decoration-white/15 underline-offset-4 hover:decoration-white/35"
-              >
-                v0
-              </a>
-              : секции, тема и копирайт приходят из данных — рендер через типизированные
+              Секции, тема и копирайт приходят из данных — рендер через типизированные
               компоненты, без HTML из модели.
             </p>
             <div className="mt-10 overflow-hidden rounded-2xl border border-white/[0.08] bg-zinc-900/30 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_32px_64px_-28px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.04]">
