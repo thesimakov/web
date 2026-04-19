@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tajweb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tajweb
+      POSTGRES_PASSWORD: tajweb
+      POSTGRES_DB: tajweb
+    # 5433 снаружи: на macOS часто уже занят локальный Postgres (Homebrew) на 5432 —
+    # тогда Prisma подключается не к контейнеру и падает с P1010.
+    ports:
+      - "5433:5432"
+    volumes:
+      - tajweb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tajweb -d tajweb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  tajweb_pgdata:
