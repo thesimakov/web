@@ -26,6 +26,17 @@ async function bootstrap() {
   await app.register(helmet as any);
 
   const config = app.get(ConfigService);
+  // Ensure admin user exists (optional, via env)
+  try {
+    const { AuthService } = await import('./modules/auth/auth.service');
+    const auth = app.get(AuthService);
+    await auth.ensureAdminUser();
+  } catch (e) {
+    // If AuthModule isn't loaded for some reason, ignore.
+    // If ADMIN_ENABLED=true but env is missing, crash loudly.
+    if (String(process.env.ADMIN_ENABLED || '').toLowerCase() === 'true') throw e;
+  }
+
   const apiPrefix = config.get<string>('API_PREFIX', 'api');
   const port = config.get<number>('PORT', 3001);
   const corsOriginsEnv = config.get<string>('CORS_ORIGINS', '');

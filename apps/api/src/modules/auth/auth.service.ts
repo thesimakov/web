@@ -23,6 +23,24 @@ export class AuthService {
     return Number(this.config.get('JWT_REFRESH_TTL_SECONDS', 60 * 60 * 24 * 30));
   }
 
+  async ensureAdminUser() {
+    const enabled = String(this.config.get('ADMIN_ENABLED', 'false')).toLowerCase() === 'true';
+    if (!enabled) return;
+
+    const email = this.config.get<string>('ADMIN_EMAIL');
+    const password = this.config.get<string>('ADMIN_PASSWORD');
+    if (!email || !password) {
+      throw new Error('ADMIN_ENABLED=true but ADMIN_EMAIL/ADMIN_PASSWORD are not configured');
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) return;
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({ data: { email, passwordHash } });
+    await this.ensureFreeSubscription(user.id);
+  }
+
   async signup(email: string, password: string) {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) throw new ConflictException('Email already in use');
@@ -38,13 +56,18 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const isDemo = email === 'demo@lmnt.dev' && password === 'demo';
+    await this.ensureAdminUser();
+    const adminEmail = this.config.get<string>('ADMIN_EMAIL');
+    const isAdminLogin =
+      String(this.config.get('ADMIN_ENABLED', 'false')).toLowerCase() === 'true' &&
+      adminEmail &&
+      email === adminEmail;
+
     let user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      if (!isDemo) throw new UnauthorizedException('Invalid credentials');
-      const passwordHash = await bcrypt.hash(password, 12);
-      user = await prisma.user.create({ data: { email, passwordHash } });
-      await this.ensureFreeSubscription(user.id);
+      // админа не автосоздаём на логине без env; обычным пользователям нужна регистрация
+      if (isAdminLogin) throw new UnauthorizedException('Admin user is not initialized');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const ok = await bcrypt.compare(password, user.passwordHash);

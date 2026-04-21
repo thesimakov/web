@@ -16,8 +16,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    const email = dto.email === 'demo' ? 'demo@lmnt.dev' : dto.email;
-    return await this.auth.login(email, dto.password);
+    return await this.auth.login(dto.email, dto.password);
   }
 
   @Post('refresh')
