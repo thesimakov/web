@@ -16,31 +16,6 @@ export function LoginForm() {
   const from =
     rawFrom.startsWith('/') && !rawFrom.startsWith('//') ? rawFrom : '/workspace';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await login(email, password);
-      setSession({
-        accessToken: res.accessToken,
-        refreshToken: res.refreshToken,
-        user: res.user,
-      });
-      router.push(from.startsWith('/') ? from : '/workspace');
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : t('error_title'));
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <main className="container-page flex min-h-screen flex-col items-center justify-center py-12">
       <div className="mb-8">
@@ -57,47 +32,25 @@ export function LoginForm() {
             {t('nav_home')}
           </button>
         </div>
-        <p className="muted mt-1 text-sm">{t('auth_login_subtitle')}</p>
-        <p className="mt-2 text-xs text-muted-foreground">
-          {t('auth_demo_hint')}
+        <p className="muted mt-1 text-sm">Вход временно отключён.</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Мы заканчиваем настройку авторизации. Попробуйте позже.
         </p>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-3">
-          <label className="block">
-            <span className="sr-only">Email</span>
-            <input
-              className="input"
-              placeholder={t('auth_email_placeholder')}
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <label className="block">
-            <span className="sr-only">{t('auth_password_sr')}</span>
-            <input
-              className="input"
-              placeholder={t('auth_password_placeholder')}
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        <div className="mt-6 grid gap-2">
           <button
-            className="btn btn-primary w-full disabled:opacity-60"
-            disabled={loading}
-            type="submit"
+            type="button"
+            className="btn btn-primary w-full"
+            onClick={() => router.push('/')}
           >
-            {loading ? t('auth_logging_in') : t('auth_login_button')}
+            На главную
           </button>
-        </form>
-
-        <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{t('auth_no_account')}</span>
-          <button type="button" className="btn btn-ghost px-0 text-xs" onClick={() => router.push('/signup')}>
-            {t('auth_signup')}
+          <button
+            type="button"
+            className="btn btn-ghost w-full text-xs text-muted-foreground"
+            onClick={() => router.push(from.startsWith('/') ? from : '/workspace')}
+          >
+            Перейти в дашборд
           </button>
         </div>
       </div>
