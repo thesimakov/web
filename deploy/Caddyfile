@@ -1,0 +1,14 @@
+lemnity.com {
+  encode zstd gzip
+
+  # API lives under /api/*
+  handle_path /api/* {
+    reverse_proxy api:3001
+  }
+
+  # Everything else is the Next.js app (landing + workspace)
+  handle {
+    reverse_proxy dashboard:44000
+  }
+}
+

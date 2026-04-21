@@ -10,6 +10,7 @@ import type { LlmTask } from "./types";
 export type ProviderKind =
   | "anthropic"
   | "openai"
+  | "routerai"
   | "google"
   | "ollama"
   | "vllm";
@@ -47,6 +48,10 @@ export function buildCloudSteps(): ProviderStep[] {
   if (e.OPENAI_API_KEY?.trim()) {
     steps.push({ kind: "openai", model: getOpenAiPrimaryModel() });
     steps.push({ kind: "openai", model: getOpenAiFallbackModel() });
+  }
+  if (e.ROUTERAI_API_KEY?.trim()) {
+    steps.push({ kind: "routerai", model: getOpenAiPrimaryModel() });
+    steps.push({ kind: "routerai", model: getOpenAiFallbackModel() });
   }
   if (e.GOOGLE_GENERATIVE_AI_API_KEY?.trim()) {
     steps.push({ kind: "google", model: e.GOOGLE_MODEL });

@@ -2,3 +2,15 @@ node_modules
 .DS_Store
 dist
 .astro
+.next
+.turbo
+.tsbuildinfo
+*.log
+coverage
+.vercel
+.cache
+.eslintcache
+.pnpm-store
+.env
+.env.*
+!.env.example

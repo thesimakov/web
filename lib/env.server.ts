@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const llmProviderSchema = z.enum(["openai", "anthropic", "google"]);
+const llmProviderSchema = z.enum(["openai", "routerai", "anthropic", "google"]);
 
 const serverEnvSchema = z.object({
   /** Какой провайдер использовать для агентов (см. .env.example). */
@@ -18,6 +18,14 @@ const serverEnvSchema = z.object({
   OPENAI_MODEL_PRIMARY: z.string().default("gpt-4o"),
   /** Запасная модель OpenAI (gpt-4o-mini). */
   OPENAI_MODEL_FALLBACK: z.string().default("gpt-4o-mini"),
+
+  /**
+   * RouterAI (OpenAI-compatible).
+   * Документация: https://routerai.ru/docs/guides
+   * Endpoint: https://routerai.ru/api/v1
+   */
+  ROUTERAI_API_KEY: z.string().min(1).optional(),
+  ROUTERAI_BASE_URL: z.string().default("https://routerai.ru/api/v1"),
 
   /** Redis для кэша состояний генерации (опционально; без URL кэш отключён). */
   REDIS_URL: z.string().optional(),
@@ -76,6 +84,8 @@ export function getServerEnv(): ServerEnv {
     OPENAI_MODEL: process.env.OPENAI_MODEL,
     OPENAI_MODEL_PRIMARY: process.env.OPENAI_MODEL_PRIMARY,
     OPENAI_MODEL_FALLBACK: process.env.OPENAI_MODEL_FALLBACK,
+    ROUTERAI_API_KEY: process.env.ROUTERAI_API_KEY,
+    ROUTERAI_BASE_URL: process.env.ROUTERAI_BASE_URL,
     REDIS_URL: process.env.REDIS_URL,
     OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
     OLLAMA_MODEL: process.env.OLLAMA_MODEL,
@@ -123,6 +133,8 @@ export function getLlmModel(): string {
   switch (e.LLM_PROVIDER) {
     case "openai":
       return getOpenAiPrimaryModel();
+    case "routerai":
+      return getOpenAiPrimaryModel();
     case "anthropic":
       return e.ANTHROPIC_MODEL;
     case "google":
@@ -138,6 +150,11 @@ export function assertLlmConfigured(): void {
     case "openai":
       if (!e.OPENAI_API_KEY) {
         throw new Error("Для LLM_PROVIDER=openai нужен OPENAI_API_KEY");
+      }
+      return;
+    case "routerai":
+      if (!e.ROUTERAI_API_KEY) {
+        throw new Error("Для LLM_PROVIDER=routerai нужен ROUTERAI_API_KEY");
       }
       return;
     case "anthropic":
@@ -190,6 +207,7 @@ export function hasAnyLlmOrLocal(): boolean {
   const e = getServerEnv();
   if (
     e.OPENAI_API_KEY?.trim() ||
+    e.ROUTERAI_API_KEY?.trim() ||
     e.ANTHROPIC_API_KEY?.trim() ||
     e.GOOGLE_GENERATIVE_AI_API_KEY?.trim()
   ) {

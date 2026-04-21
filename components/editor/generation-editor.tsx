@@ -47,9 +47,11 @@ function buildEditorSearch(params: { site?: string | null; mode: "schema" | "cod
 export function GenerationEditor({
   initialSiteId,
   initialOutputMode,
+  initialAutoGenerate,
 }: {
   initialSiteId?: string;
   initialOutputMode?: "schema" | "codegen";
+  initialAutoGenerate?: boolean;
 }) {
   const replaceEditorUrl = useCallback(
     (opts: { site?: string | null; mode: "schema" | "codegen" }) => {
@@ -76,6 +78,7 @@ export function GenerationEditor({
   const [schema, setSchema] = useState<SiteSchema | null>(null);
   const [codegen, setCodegen] = useState<CodegenPayload | null>(null);
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
+  const [autoGenerateFired, setAutoGenerateFired] = useState(false);
   const [siteId, setSiteId] = useState<string | null>(null);
   const [versionCount, setVersionCount] = useState<number | null>(null);
   const [versionsOpen, setVersionsOpen] = useState(false);
@@ -132,6 +135,23 @@ export function GenerationEditor({
       void loadSite(initialSiteId);
     }
   }, [initialSiteId, loadSite]);
+
+  useEffect(() => {
+    if (!initialAutoGenerate) {
+      return;
+    }
+    if (autoGenerateFired) {
+      return;
+    }
+    if (loading || loadingSite) {
+      return;
+    }
+    if (!prompt.trim()) {
+      return;
+    }
+    setAutoGenerateFired(true);
+    void handleGenerate();
+  }, [initialAutoGenerate, autoGenerateFired, loading, loadingSite, prompt]);
 
   async function loadVersionsList(id: string) {
     setVersionsOpen(true);

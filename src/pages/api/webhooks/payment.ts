@@ -50,7 +50,7 @@ export const POST: APIRoute = async ({ request }) => {
     const sig =
       request.headers.get("x-signature") ??
       request.headers.get("x-webhook-signature") ??
-      request.headers.get("x-openrouter-signature");
+      request.headers.get("x-routerai-signature");
     signatureOk = verifyPaymentSignature(rawBody, sig);
     provider = "generic";
   }

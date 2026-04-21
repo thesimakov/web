@@ -22,18 +22,13 @@ export function HeroPrompt() {
   return (
     <section
       id="prompt"
-      className="relative overflow-hidden border-b border-white/[0.06] px-4 pb-24 pt-12 sm:pb-32 sm:pt-16"
+      className="relative overflow-hidden border-b border-border/50 px-4 pb-20 pt-32 sm:pb-28 sm:pt-40"
     >
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_-30%,rgba(255,255,255,0.08),transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_100%_80%,rgba(120,80,255,0.12),transparent)]" />
+        <div className="absolute left-1/2 top-0 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-gradient-to-b from-cyan-500/10 via-purple-500/5 to-transparent blur-3xl animate-float" />
         <div
-          className="absolute inset-0 opacity-[0.35]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-            backgroundSize: "64px 64px",
-          }}
+          className="absolute right-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-cyan-500/5 blur-3xl"
+          style={{ animationDelay: "1s" }}
         />
       </div>
 
@@ -42,7 +37,7 @@ export function HeroPrompt() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-300"
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground animate-fade-up"
         >
           <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
             Lemnity
@@ -55,7 +50,7 @@ export function HeroPrompt() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.04 }}
-          className="text-balance text-4xl font-medium tracking-tight text-white sm:text-5xl sm:leading-[1.08] md:text-6xl md:leading-[1.06]"
+          className="text-balance text-4xl font-bold tracking-tight sm:text-5xl sm:leading-[1.08] md:text-6xl md:leading-[1.06] lg:text-7xl"
         >
           Что вы хотите создать?
         </motion.h1>
@@ -64,7 +59,7 @@ export function HeroPrompt() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.08 }}
-          className="mx-auto mt-5 max-w-xl text-pretty text-base leading-relaxed text-zinc-400 sm:text-lg"
+          className="mx-auto mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
         >
           Промпт, сборка и превью: структура и тексты приходят из данных, вы контролируете
           схему и режим вывода.
@@ -74,32 +69,43 @@ export function HeroPrompt() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.14 }}
-          className="mx-auto mt-12 max-w-2xl text-left"
+          className="mx-auto mt-10 max-w-2xl text-left"
         >
           <label htmlFor="site-prompt" className="sr-only">
             Описание сайта
           </label>
-          <div className="overflow-hidden rounded-3xl border border-white/[0.1] bg-zinc-950/80 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_24px_80px_-24px_rgba(0,0,0,0.8)] ring-1 ring-white/[0.04] backdrop-blur-md">
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-2xl shadow-black/20 glow-effect shimmer-border">
             <textarea
               id="site-prompt"
               rows={5}
               placeholder="Опишите страницу: ниша, аудитория, целевое действие…"
-              className="w-full resize-none border-0 bg-transparent px-5 py-4 text-[15px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-0 sm:px-6 sm:py-5 sm:text-base"
+              className="w-full resize-none rounded-xl border-0 bg-background px-5 py-4 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-500/50 sm:px-6 sm:py-5 sm:text-base"
               readOnly
             />
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] px-4 py-3 sm:px-5">
-              <span className="text-xs text-zinc-500">
-                Генерация через <code className="text-zinc-400">/api/generate</code>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/50 px-4 py-3 sm:px-5">
+              <span className="text-xs text-muted-foreground">
+                Генерация через <code className="text-foreground/70">/api/generate</code>
               </span>
-              <a
-                href="/editor"
-                className={cn(
-                  buttonVariants({ size: "sm" }),
-                  "h-9 rounded-full bg-white px-5 text-sm font-medium text-zinc-950 shadow-sm hover:bg-zinc-100",
-                )}
-              >
-                Сгенерировать
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/editor"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "h-10 rounded-xl border-border bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                  )}
+                >
+                  Сгенерировать промт
+                </a>
+                <a
+                  href="/editor?autogen=1"
+                  className={cn(
+                    buttonVariants({ size: "sm" }),
+                    "h-10 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-5 text-sm font-medium text-white border-0 hover:from-cyan-600 hover:to-purple-600",
+                  )}
+                >
+                  Сгенерировать сайт
+                </a>
+              </div>
             </div>
           </div>
         </motion.div>

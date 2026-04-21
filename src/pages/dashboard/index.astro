@@ -5,10 +5,17 @@ import { getDemoUserId } from "@/lib/env.server";
 import { prisma } from "@/lib/prisma";
 
 const userId = getDemoUserId();
-const sites = await prisma.site.findMany({
-  where: { userId },
-  orderBy: { createdAt: "desc" },
-});
+let sites: { id: string; prompt: string; createdAt: Date }[] = [];
+let dbUnavailable: string | null = null;
+try {
+  sites = await prisma.site.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+} catch (e) {
+  dbUnavailable =
+    e instanceof Error ? e.message : "База данных недоступна (DATABASE_URL не задан)";
+}
 ---
 
 <BaseLayout title="Мои сайты — Lemnity">
@@ -31,6 +38,22 @@ const sites = await prisma.site.findMany({
         Новая генерация
       </a>
     </div>
+
+    {dbUnavailable ? (
+      <div class="mt-8 rounded-2xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
+        <p class="font-medium text-foreground">Дашборд запущен, но БД не подключена.</p>
+        <p class="mt-2">
+          Задай переменную окружения <code class="text-foreground/70">DATABASE_URL</code> и
+          выполни миграции Prisma, чтобы увидеть сохранённые сайты.
+        </p>
+        <details class="mt-3">
+          <summary class="cursor-pointer select-none text-foreground/80">
+            Детали ошибки
+          </summary>
+          <pre class="mt-2 overflow-auto whitespace-pre-wrap rounded-xl bg-background/60 p-3 text-xs text-foreground/70">{dbUnavailable}</pre>
+        </details>
+      </div>
+    ) : null}
 
     {
       sites.length === 0 ? (

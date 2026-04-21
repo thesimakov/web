@@ -7,6 +7,8 @@ const site = Astro.url.searchParams.get("site") ?? undefined;
 const modeRaw = Astro.url.searchParams.get("mode");
 const initialOutputMode =
   modeRaw === "schema" || modeRaw === "codegen" ? modeRaw : undefined;
+const autoGen = Astro.url.searchParams.get("autogen");
+const initialAutoGenerate = autoGen === "1" || autoGen === "true";
 ---
 
 <BaseLayout title="Редактор — Lemnity">
@@ -15,5 +17,6 @@ const initialOutputMode =
     client:load
     initialSiteId={site}
     initialOutputMode={initialOutputMode}
+    initialAutoGenerate={initialAutoGenerate}
   />
 </BaseLayout>

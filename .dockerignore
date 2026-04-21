@@ -1,0 +1,17 @@
+**/.git
+**/.next
+**/node_modules
+**/dist
+**/.turbo
+**/.DS_Store
+**/*.log
+**/coverage
+**/.cache
+apps/dashboard/.next
+apps/dashboard/.vercel
+apps/dashboard/out
+terminals
+agent-transcripts
+deploy/.env.api
+deploy/.env.dashboard
+

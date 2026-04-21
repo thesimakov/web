@@ -47,17 +47,17 @@ export function HomeFeatures() {
   return (
     <section
       id="features"
-      className="scroll-mt-20 border-b border-white/[0.06] bg-zinc-950 py-20 sm:py-28"
+      className="scroll-mt-20 border-t border-border py-20 sm:py-28"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
             Возможности
           </p>
-          <h2 className="mt-3 text-balance text-3xl font-medium tracking-tight text-white sm:text-4xl">
+          <h2 className="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             От идеи до рабочей страницы за минуты
           </h2>
-          <p className="mt-4 text-pretty text-sm leading-relaxed text-zinc-400 sm:text-base">
+          <p className="mt-4 text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
             Умная инфраструктура под генерацию: безопасный вывод, превью и контроль версий —
             с вашей схемой и хостингом.
           </p>
@@ -70,14 +70,16 @@ export function HomeFeatures() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="group rounded-2xl border border-white/[0.08] bg-zinc-900/40 p-6 transition-colors hover:border-white/[0.12] hover:bg-zinc-900/60"
+              transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.06 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              whileTap={{ scale: 0.99 }}
+              className="group will-change-transform rounded-2xl border border-border bg-card p-6 transition-[border-color,box-shadow,transform] hover:border-cyan-500/50 hover:shadow-[0_18px_50px_-30px_rgba(0,0,0,0.8)]"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-300 transition-colors group-hover:border-white/15 group-hover:text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background/60 text-muted-foreground transition-colors group-hover:border-cyan-500/50 group-hover:text-foreground">
                 <item.icon className="h-5 w-5" strokeWidth={1.5} aria-hidden />
               </div>
-              <h3 className="mt-4 text-base font-medium text-white">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-500">{item.desc}</p>
+              <h3 className="mt-4 text-base font-semibold text-foreground">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
             </motion.article>
           ))}
         </div>

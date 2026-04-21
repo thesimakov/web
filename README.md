@@ -1,26 +1,47 @@
-This project is built with [Astro](https://astro.build), [React](https://react.dev) (острова для интерактива) и [Tailwind CSS](https://tailwindcss.com).
+## LMNT
 
-## Getting Started
+LMNT — AI‑платформа для генерации, сборки и деплоя сайтов (mini‑Vercel).
 
-Install dependencies and run the dev server:
+### Быстрый старт (локально)
+
+1) Создайте `.env` из примера:
 
 ```bash
-npm install
-npm run dev
+cp .env.example .env
 ```
 
-Open [http://localhost:4321](http://localhost:4321) in the browser (порт Astro по умолчанию).
+2) Поднимите инфраструктуру:
 
-## Scripts
+```bash
+docker compose up -d postgres redis traefik
+```
 
-- `npm run dev` — режим разработки
-- `npm run build` — production-сборка
-- `npm run start` — запуск собранного Node-сервера (`output: "server"`, адаптер `@astrojs/node`)
-- `npm run preview` — превью после `build`
-- `npm run lint` — `astro check`
+3) Установите зависимости:
 
-## Env
+```bash
+pnpm install
+```
 
-Для демо-пользователя на клиенте задайте `PUBLIC_DEMO_USER_ID` (должен совпадать с `DEMO_USER_ID` на сервере).
+4) Примените миграции и запустите dev:
 
-См. также комментарии в `lib/env.server.ts` и Prisma/БД.
+```bash
+pnpm db:migrate
+pnpm dev
+```
+
+### Сервисы
+
+- `apps/api`: NestJS (Fastify) — API gateway + core сервисы
+- `apps/dashboard`: Next.js — пользовательский дашборд
+- `apps/worker`: BullMQ — фоновые задачи (AI, build/deploy)
+- `packages/*`: общие пакеты (ai-client, database, shared-types и др.)
+
+### Интеграция с Vercel (деплой `apps/dashboard`)
+
+Этот репозиторий совместим с Vercel CLI/платформой (см. `vercel.json` в корне). На Vercel обычно деплоится только UI (`apps/dashboard`), а `apps/api` и `apps/worker` остаются как отдельные сервисы (Docker/VM/Render/Fly/и т.п.).
+
+- **Переменные окружения (Vercel → Project Settings → Environment Variables)**:
+  - **`NEXT_PUBLIC_API_BASE_URL`**: базовый URL вашего API, например `https://api.example.com/api`
+  - **`CORS_ORIGINS`** (на стороне `apps/api`): список разрешённых origin через запятую, например `https://lmnt.example.com,https://lmnt-git-branch.vercel.app`
+    - Можно указать `*`, чтобы разрешить любой origin (не рекомендуется для prod).
+

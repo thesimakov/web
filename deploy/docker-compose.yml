@@ -1,0 +1,44 @@
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - dashboard
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - ./.env.api
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: apps/dashboard/Dockerfile
+    env_file:
+      - ./.env.dashboard
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: packages/database/Dockerfile
+    env_file:
+      - ./.env.api
+    entrypoint: ["pnpm","-C","packages/database","prisma","migrate","deploy"]
+    restart: "no"
+
+volumes:
+  caddy_data:
+  caddy_config:
+

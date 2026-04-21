@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd apps/dashboard && pnpm build",
+  "devCommand": "cd apps/dashboard && pnpm dev -p 44000",
+  "outputDirectory": "apps/dashboard/.next"
+}
+

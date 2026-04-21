@@ -1,0 +1,37 @@
+{
+  "name": "@lmnt/database",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prisma": "prisma",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "seed": "node prisma/seed.ts",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.15.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.1",
+    "bcryptjs": "^3.0.2",
+    "prisma": "^6.15.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}
+

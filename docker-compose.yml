@@ -1,23 +1,47 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: tajweb-postgres
-    restart: unless-stopped
     environment:
-      POSTGRES_USER: tajweb
-      POSTGRES_PASSWORD: tajweb
-      POSTGRES_DB: tajweb
-    # 5433 снаружи: на macOS часто уже занят локальный Postgres (Homebrew) на 5432 —
-    # тогда Prisma подключается не к контейнеру и падает с P1010.
+      POSTGRES_USER: lmnt
+      POSTGRES_PASSWORD: lmnt
+      POSTGRES_DB: lmnt
     ports:
-      - "5433:5432"
+      - "55432:5432"
     volumes:
-      - tajweb_pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tajweb -d tajweb"]
+      test: ["CMD-SHELL", "pg_isready -U lmnt -d lmnt"]
       interval: 5s
-      timeout: 5s
-      retries: 5
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
-  tajweb_pgdata:
+  postgres_data:
+  redis_data:
+

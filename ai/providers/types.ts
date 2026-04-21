@@ -13,7 +13,7 @@ export type LlmGenerateParams = {
 };
 
 export interface LLMProvider {
-  readonly id: "openai" | "anthropic" | "google" | "ollama" | "vllm";
+  readonly id: "openai" | "routerai" | "anthropic" | "google" | "ollama" | "vllm";
   /** Провайдер готов к вызову (ключ, URL и т.д.). */
   isAvailable(): boolean;
   generate(params: LlmGenerateParams): Promise<string>;
